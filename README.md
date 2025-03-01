@@ -103,7 +103,7 @@ For a detailed writeup on our architectural decisions behind AI Text Editor, ple
 ## Summary
 
 - **Production Mode:**  
-  Use `docker-compose up --build` from the project root after setting up the `.env-docker` files in the `backend` and `frontend` folders.
+  Use `docker-compose -f docker-compose-local.yml up --build` from the project root after setting up the `.env-docker` files in the `backend` and `frontend` folders.
 
 - **Development Mode:**  
   Copy `.env-sample` to `.env` in both the `backend` and `frontend` folders, update with your own OpenAI API key (and backend URL for frontend), then run:
