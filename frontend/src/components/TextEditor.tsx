@@ -1,3 +1,4 @@
+// src/components/TextEditor.tsx
 import React from 'react';
 
 type TextEditorProps = {
@@ -11,25 +12,21 @@ const TextEditor: React.FC<TextEditorProps> = ({
   onChange,
   onSelectionChange,
 }) => {
-  /**
-   * This handler updates the parent with the current selection range
-   * whenever the user selects text in the textarea.
-   */
   const handleSelect = (e: React.SyntheticEvent<HTMLTextAreaElement>) => {
     const target = e.currentTarget;
-    // Type assertion to get selectionStart, selectionEnd
-    const selectionStart = (target as HTMLTextAreaElement).selectionStart;
-    const selectionEnd = (target as HTMLTextAreaElement).selectionEnd;
+    const selectionStart = target.selectionStart;
+    const selectionEnd = target.selectionEnd;
     onSelectionChange(selectionStart, selectionEnd);
   };
 
   return (
     <textarea
+      data-testid="text-editor"
       className="w-full h-64 p-2 border border-gray-300 rounded focus:outline-none"
       value={text}
       onChange={(e) => onChange(e.target.value)}
       onSelect={handleSelect}
-      placeholder="Type or paste your text here, then highlight a portion to paraphrase..."
+      placeholder="Type or paste your text here, then highlight a portion to transform..."
     />
   );
 };
