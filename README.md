@@ -26,11 +26,11 @@
      VITE_BACKEND_URL=http://backend:8080
      ```
 
-2. **Run Docker Compose:**
+2. **Run Docker Compose (on your local machine):**
 
    From the project root (where the `docker-compose.yml` file is located), run:
    ```bash
-   docker-compose up --build
+   docker-compose -f docker-compose-local.yml up --build
    ```
    This command builds and starts both the backend and frontend containers.  
    - The **backend** will be accessible on [http://localhost:8080](http://localhost:8080).
