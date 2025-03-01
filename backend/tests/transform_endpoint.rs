@@ -9,12 +9,10 @@ use std::env;
 #[tokio::test]
 #[serial]
 async fn test_transform_endpoint_paraphrase() {
-    // Create a new async Mockito server.
     let mut server = Server::new_async().await;
     env::set_var("OPENAI_API_KEY", "dummy_key");
     env::set_var("OPENAI_API_BASE_URL", &server.url());
 
-    // Define a mock response for the paraphrase action.
     let _m = server
         .mock("POST", "/v1/chat/completions")
         .match_header("Authorization", "Bearer dummy_key")
@@ -37,7 +35,6 @@ async fn test_transform_endpoint_paraphrase() {
         .create_async()
         .await;
 
-    // Initialize the Actix app with our transform endpoint.
     let app = test::init_service(App::new().service(transform_endpoint)).await;
     let req_body = json!({
         "text": "Hello world",
@@ -201,12 +198,12 @@ async fn test_transform_endpoint_translate() {
 #[tokio::test]
 #[serial]
 async fn test_transform_endpoint_missing_target_language_error() {
-    // Test the error condition for translation when target_language is missing.
+    // For translation, missing target_language should return a 400 Bad Request with our custom error.
     let app = test::init_service(App::new().service(transform_endpoint)).await;
     let req_body = json!({
         "text": "Hello, how are you?",
         "action": "translate"
-        // Missing target_language field
+        // target_language is missing
     });
     let req = test::TestRequest::post()
         .uri("/api/transform")
@@ -214,6 +211,12 @@ async fn test_transform_endpoint_missing_target_language_error() {
         .to_request();
 
     let resp = test::call_service(&app, req).await;
-    // We expect an error; our handler should return a 500 in that case.
-    assert!(resp.status().is_server_error());
+    assert_eq!(resp.status(), actix_web::http::StatusCode::BAD_REQUEST);
+    let body_bytes = test::read_body(resp).await;
+    let body_str = std::str::from_utf8(&body_bytes).unwrap();
+    let v: serde_json::Value = serde_json::from_str(body_str).unwrap();
+    assert!(v["message"]
+        .as_str()
+        .unwrap()
+        .contains("target_language is required"));
 }
