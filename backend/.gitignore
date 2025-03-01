@@ -1,0 +1,32 @@
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Editor/IDE files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Rust build output
+/target
+
+# Cargo lockfile (for applications it's common to commit Cargo.lock;
+# if this were a library, you might choose to ignore it)
+Cargo.lock
+
+# Environment variable files (adjust as needed)
+.env
+.env.*
+
+# Node modules (for frontend and any nested node projects)
+node_modules/
+**/node_modules/
+
+# Frontend build output directories (Vite, etc.)
+dist/
+build/
+
+# Logs and temporary files
+*.log
+tmp/
