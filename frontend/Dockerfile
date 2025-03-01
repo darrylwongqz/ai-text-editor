@@ -2,6 +2,14 @@
 FROM node:18 as builder
 WORKDIR /app
 
+# Accept VITE_BACKEND_URL as a build argument
+ARG VITE_BACKEND_URL
+# Set the build argument as an environment variable for the build process
+ENV VITE_BACKEND_URL=${VITE_BACKEND_URL}
+
+# Echo the value to verify it's set correctly during the build
+RUN echo "VITE_BACKEND_URL is set to $VITE_BACKEND_URL"
+
 # Copy package files and install dependencies.
 COPY package.json package-lock.json* ./
 RUN npm install
