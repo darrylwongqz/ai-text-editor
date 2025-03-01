@@ -1,5 +1,13 @@
 // src/App.test.tsx
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import {
+  describe,
+  it,
+  expect,
+  vi,
+  beforeEach,
+  afterEach,
+  MockInstance,
+} from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from './App';
@@ -19,15 +27,17 @@ describe('App component', () => {
   let fetchMock: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    fetchMock = vi.spyOn(global, 'fetch').mockResolvedValue(
-      new Response(
-        JSON.stringify({ transformed_text: 'Mocked transformation' }),
-        {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' },
-        }
-      )
-    );
+    fetchMock = vi
+      .spyOn(globalThis as { fetch: typeof fetch }, 'fetch')
+      .mockResolvedValue(
+        new Response(
+          JSON.stringify({ transformed_text: 'Mocked transformation' }),
+          {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          }
+        )
+      ) as unknown as MockInstance;
   });
 
   afterEach(() => {

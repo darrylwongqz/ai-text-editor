@@ -58,8 +58,11 @@ const App: React.FC = () => {
     };
 
     try {
-      // Replace with your backend URL or use a Vite proxy.
-      const response = await fetch('http://localhost:8080/api/transform', {
+      // Get the backend URL from the Vite environment variable.
+      const backendUrl =
+        import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
+
+      const response = await fetch(`${backendUrl}/api/transform`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestBody),

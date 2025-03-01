@@ -1,4 +1,3 @@
-// src/components/ActionButtons.tsx
 import React from 'react';
 
 interface ActionButtonsProps {

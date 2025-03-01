@@ -1,4 +1,3 @@
-// src/components/ProposedChange.tsx
 import React from 'react';
 
 type ProposedChangeProps = {

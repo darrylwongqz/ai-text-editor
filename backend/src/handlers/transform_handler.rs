@@ -1,9 +1,8 @@
-use actix_web::{post, web, HttpResponse, Responder};
-use serde::{Deserialize, Serialize};
-
 use crate::errors::AppError;
 use crate::models::transformation::TransformationAction;
 use crate::services::openai_service;
+use actix_web::{post, web, HttpResponse, Responder};
+use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize)]
 pub struct TransformRequest {

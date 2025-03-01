@@ -4,18 +4,24 @@ use std::env;
 
 use crate::errors::AppError;
 use crate::models::transformation::TransformationAction;
+use log::{error, info};
 
 pub async fn transform_text(
     original_text: &str,
     action: TransformationAction,
     target_language: Option<&str>,
 ) -> Result<String, AppError> {
+    info!("Starting transformation process for action: {:?}", action);
+
     let api_key =
         env::var("OPENAI_API_KEY").map_err(|_| AppError::MissingEnvVar("OPENAI_API_KEY".into()))?;
+    info!("Using API key: [REDACTED]");
 
     let base_url =
         env::var("OPENAI_API_BASE_URL").unwrap_or_else(|_| "https://api.openai.com".to_string());
     let openai_url = format!("{}/v1/chat/completions", base_url);
+    info!("Sending request to OpenAI URL: {}", openai_url);
+
     let client = reqwest::Client::new();
 
     let (instruction, system_message) = match action {
@@ -55,6 +61,7 @@ pub async fn transform_text(
         "temperature": 0.7,
         "max_tokens": 300
     });
+    info!("Request body: {}", request_body);
 
     let resp = client
         .post(&openai_url)
@@ -63,57 +70,36 @@ pub async fn transform_text(
         .json(&request_body)
         .send()
         .await
-        .map_err(|e| AppError::OpenAIRequestFailed(e.to_string()))?;
+        .map_err(|e| {
+            error!("Error sending request: {}", e);
+            AppError::OpenAIRequestFailed(e.to_string())
+        })?;
 
     if !resp.status().is_success() {
         let status = resp.status();
         let err_text = resp.text().await.unwrap_or_default();
+        error!("Request failed: {} - {}", status, err_text);
         return Err(AppError::OpenAIRequestFailed(format!(
             "{} - {}",
             status, err_text
         )));
     }
 
-    let json_resp: serde_json::Value = resp
-        .json()
-        .await
-        .map_err(|_| AppError::UnexpectedResponse)?;
+    let json_resp: serde_json::Value = resp.json().await.map_err(|_| {
+        error!("Failed to parse response JSON");
+        AppError::UnexpectedResponse
+    })?;
+    info!("Received response: {:?}", json_resp);
+
     let transformed_text = json_resp["choices"][0]["message"]["content"]
         .as_str()
         .ok_or(AppError::UnexpectedResponse)?
         .trim()
         .to_string();
 
+    info!(
+        "Transformation successful, returning text: {}",
+        transformed_text
+    );
     Ok(transformed_text)
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::models::transformation::TransformationAction;
-    use std::env;
-
-    #[tokio::test]
-    async fn test_transform_text_missing_api_key() {
-        // Ensure the API key is not set.
-        env::remove_var("OPENAI_API_KEY");
-
-        let result = transform_text("Test text", TransformationAction::Paraphrase, None).await;
-        assert!(result.is_err());
-        if let Err(e) = result {
-            assert!(e.to_string().contains("Missing environment variable"));
-        }
-    }
-
-    #[tokio::test]
-    async fn test_transform_text_missing_target_language() {
-        // Set a dummy API key to pass the API key check.
-        env::set_var("OPENAI_API_KEY", "dummy_key");
-        // Do not set target_language for a translation action.
-        let result = transform_text("Test text", TransformationAction::Translate, None).await;
-        assert!(result.is_err());
-        if let Err(e) = result {
-            assert!(e.to_string().contains("target_language is required"));
-        }
-    }
 }

@@ -7,12 +7,14 @@ use dotenv::dotenv;
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
 
-    println!("Starting server at http://localhost:8080");
+    env_logger::init();
+
+    log::info!("Starting server at http://localhost:8080");
 
     HttpServer::new(|| {
         App::new()
             .wrap(
-                Cors::default() // Or use Cors::permissive() for development
+                Cors::default()
                     .allow_any_origin()
                     .allow_any_method()
                     .allow_any_header(),

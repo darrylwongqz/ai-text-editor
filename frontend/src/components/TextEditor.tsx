@@ -1,4 +1,3 @@
-// src/components/TextEditor.tsx
 import React from 'react';
 
 type TextEditorProps = {
