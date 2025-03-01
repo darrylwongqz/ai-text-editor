@@ -1,6 +1,6 @@
 # AI Text Editor
 
-[Live Version](https://your-live-app-link.com)
+[Live Version](https://ai-text-editor-production-88eb4.up.railway.app/)
 
 ## Overview
 
