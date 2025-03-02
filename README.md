@@ -8,7 +8,7 @@
 
 - A **React/TypeScript** frontend built with Vite that provides a rich text editor experience.
 - A **Rust/Actix Web** backend that integrates with the OpenAI API to perform the text transformations.
-- Docker support for both local production deployment.
+- Docker support for local production build.
 
 ## Running the App in Production Mode (via Docker Compose)
 
