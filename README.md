@@ -2,6 +2,8 @@
 
 [Live Version](https://ai-text-editor-production-88eb4.up.railway.app/)
 
+[Demo Video](https://drive.google.com/file/d/1Rl5GworfXfrgU_Wd27Vqr8JfzaaPmap3/view?usp=sharing)
+
 ## Overview
 
 **AI Text Editor** is a full-stack application that allows users to transform text using advanced AI capabilities. Users can highlight text in the editor and choose to have it paraphrased, expanded, summarized, or translated. The application consists of:
